@@ -1,0 +1,28 @@
+name: Linki Guncelle
+
+on:
+  schedule:
+    - cron: '0 */4 * * *' # Her 4 saatte bir otomatik çalışır
+  workflow_dispatch: # İstediğinde elle çalıştırmak için
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Python Kur
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Gereçleri Kur
+        run: |
+          pip install yt-dlp
+      - name: Linki Yenile
+        run: python youtube_al.py
+      - name: Değişiklikleri Kaydet
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Link güncellendi" || exit 0
+          git push
