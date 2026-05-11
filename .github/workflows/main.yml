@@ -1,40 +1,32 @@
-name: Linki Guncelle
+name: Flux View Bot Automation
 
 on:
   schedule:
-    - cron: '0 */4 * * *' # Her 4 saatte bir otomatik çalışır
-  workflow_dispatch: # İstediğinde elle çalıştırmak için
+    - cron: '0 */2 * * *' # Her 2 saatte bir çalışır
+  workflow_dispatch: # Manuel başlatma butonu ekler
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # GitHub'ın dosyayı kaydetmesine izin verir
-    
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # Node 24 zorunluluğu için
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4 # v2'den v4'e güncellendi
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Python Kur
-        uses: actions/setup-python@v5 # v2'den v5'e güncellendi
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.9'
 
-      - name: Gereçleri Kur
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests yt-dlp # Requests kütüphanesini buraya ekledik
+          pip install -r requirements.txt
 
-      - name: Linki Yenile
-        run: python youtube_al.py
-
-      - name: Değişiklikleri Kaydet
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add yayinlar.m3u
-          git commit -m "Link güncellendi" || exit 0
-          git push
+      - name: Run Bot
+        env:
+          # GitHub Actions'ın takılmaması için sonsuz döngüyü script içinden değil, 
+          # workflow üzerinden yönetmek daha sağlıklıdır.
+          PYTHONUNBUFFERED: 1
+        run: python your_script_name.py 
+        # 'your_script_name.py' kısmını kendi dosya adınla değiştir.
