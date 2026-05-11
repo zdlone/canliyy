@@ -3,7 +3,7 @@ import os
 # Hangi kanalı istiyorsan onun ID'sini buraya yaz
 # Örnek: UC... şeklinde olan kanal ID'si
 CHANNELS = {
-    "Kanal_Adi": "UC_KANAL_ID_BURAYA" 
+    "Kanal_Adi": "6kQpSqTkN88" 
 }
 
 def get_link(channel_id):
