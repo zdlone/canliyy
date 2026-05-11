@@ -1,21 +1,26 @@
 import os
 
-# Kanal ID'lerin kesin doğru.
-CHANNELS = {
-    "Cok Guzel Hareketler 2": "UCmH69-Aay_Hsnf9n8Ndf_mA",
-    "Emret Komutanim": "UCJ5Z8LgXoH7mO1u-oX_68sw"
+# Linklerini verdiğin videoların ID'lerini buraya koydum
+# https://www.youtube.com/live/Odt0ixuucfc -> Odt0ixuucfc
+# https://www.youtube.com/live/6kQpSqTkN88 -> 6kQpSqTkN88
+VIDEOS = {
+    "Cok Guzel Hareketler 2": "Odt0ixuucfc",
+    "Emret Komutanim": "6kQpSqTkN88"
 }
 
-def get_link(channel_id):
-    # Kullanıcı gibi davranması için "user-agent" ekledik
-    # Ve YouTube'un engellemesini aşmak için bazı ekstra parametreler koyduk
-    cmd = f'yt-dlp --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36" -g -f best "https://www.youtube.com/channel/{channel_id}/live"'
+def get_link(video_id):
+    # Doğrudan video linki üzerinden m3u8 çekiyoruz
+    cmd = f'yt-dlp --geo-bypass -g -f best "https://www.youtube.com/watch?v={video_id}"'
     link = os.popen(cmd).read().strip()
     return link
 
 with open("yayinlar.m3u", "w") as f:
     f.write("#EXTM3U\n")
-    for name, cid in CHANNELS.items():
-        m3u8 = get_link(cid)
-        if m3u8 and "googlevideo.com" in m3u8:
+    for name, vid in VIDEOS.items():
+        print(f"{name} aliniyor...")
+        m3u8 = get_link(vid)
+        if m3u8.startswith("http"):
             f.write(f"#EXTINF:-1,{name}\n{m3u8}\n")
+            print(f"{name} Tamam.")
+        else:
+            print(f"{name} HATA!")
