@@ -1,45 +1,27 @@
 import os
 import requests
+import re
 
-# Video ID'lerin
-VIDEOS = {
-    "Cok Guzel Hareketler 2": "Odt0ixuucfc",
-    "Emret Komutanim": "6kQpSqTkN88"
+# Buraya sadece izlemek istediğin canlı yayınların linkini yapıştır
+LINKS = {
+    "Cok Guzel Hareketler 2": "https://www.youtube.com/live/Odt0ixuucfc",
+    "Emret Komutanim": "https://www.youtube.com/live/6kQpSqTkN88"
 }
 
-def get_m3u8(video_id):
-    # YouTube'un engellemediği alternatif köprü sunucuları (Sırayla dener)
-    instances = [
-        "https://inv.riverside.rocks",
-        "https://vid.priv.au",
-        "https://invidious.namazso.eu"
-    ]
-    
-    for base_url in instances:
-        try:
-            # API üzerinden m3u8 linkini çekiyoruz
-            api_url = f"{base_url}/api/v1/videos/{video_id}"
-            r = requests.get(api_url, timeout=5).json()
-            
-            # HLS (m3u8) linkini bul
-            if "hlsUrl" in r:
-                return r["hlsUrl"]
-            
-            # Alternatif formatlarda ara
-            for fmt in r.get("adaptiveFormats", []):
-                if "m3u8" in fmt.get("type", "") or ".m3u8" in fmt.get("url", ""):
-                    return fmt["url"]
-        except:
-            continue # Bu sunucu çalışmazsa diğerine geç
-    return None
+def get_link(url):
+    # yt-dlp ile doğrudan link üzerinden m3u8 çekiyoruz
+    # ID aramadan, direkt linki hedef alıyoruz
+    cmd = f'yt-dlp --geo-bypass -g -f best "{url}"'
+    link = os.popen(cmd).read().strip()
+    return link
 
 with open("yayinlar.m3u", "w") as f:
     f.write("#EXTM3U\n")
-    for name, vid in VIDEOS.items():
+    for name, url in LINKS.items():
         print(f"{name} linki aliniyor...")
-        link = get_m3u8(vid)
-        if link:
-            f.write(f"#EXTINF:-1,{name}\n{link}\n")
-            print(f"{name} basarili.")
+        m3u8 = get_link(url)
+        if m3u8.startswith("http"):
+            f.write(f"#EXTINF:-1,{name}\n{m3u8}\n")
+            print(f"{name} Basarili.")
         else:
-            print(f"{name} alinamadi.")
+            print(f"{name} Hata: Link bulunamadi.")
