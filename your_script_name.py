@@ -1,68 +1,75 @@
 import os, sys, threading, time, requests
 from threading import active_count
 
-# --- AYARLAR ---
+# --- 2026 TUNING ---
 TARGET_LINK = 'https://t.me/fluxorjinal/15'
-N_THREADS = 100 # GitHub Actions için 100 daha stabildir, kilitlenmeyi önler.
+MAX_THREADS = 150 # GitHub limitlerinde maksimum verim
 
-def send_seen(channel, msgid, proxy):
-    s = requests.Session()
+def send_view(channel, msgid, proxy):
+    session = requests.Session()
+    # 2026 Modern Tarayıcı Parmak İzi
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "*/*",
+        "X-Requested-With": "XMLHttpRequest"
+    }
     proxies = {'http': proxy, 'https': proxy}
+    
     try:
-        # Telegram embed sayfasından cookie ve anahtar alımı
-        a = s.get(f"https://t.me/{channel}/{msgid}?embed=1", timeout=10, proxies=proxies)
-        cookie = a.headers.get('set-cookie', '').split(';')[0]
-        key = a.text.split('data-view="')[1].split('"')[0]
+        # Adım 1: Sayfaya gir ve cookie al
+        r1 = session.get(f"https://t.me/{channel}/{msgid}?embed=1", timeout=8, proxies=proxies, headers=headers)
+        cookie = r1.headers.get('set-cookie', '').split(';')[0]
+        key = r1.text.split('data-view="')[1].split('"')[0]
         
-        h2 = {
-            "Accept": "*/*", 
-            "Cookie": cookie, 
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/110.0.0.0",
-            "X-Requested-With": "XMLHttpRequest"
-        }
+        # Adım 2: Onay isteği gönder (View ekleyen asıl kısım)
+        headers["Cookie"] = cookie
+        headers["Referer"] = f"https://t.me/{channel}/{msgid}?embed=1"
         
-        # İzlenmeyi gönder
-        i = s.get(f'https://t.me/v/?views={key}', timeout=10, headers=h2, proxies=proxies)
-        if i.text == "true":
-            print(f'[+] View Eklendi: {proxy}')
+        r2 = session.get(f'https://t.me/v/?views={key}', timeout=8, headers=headers, proxies=proxies)
+        
+        if "true" in r2.text.lower():
+            print(f"\033[1;32m[SUCCESS]\033[0m {proxy} -> View Basıldı!")
     except:
-        return False
+        pass # Hatalı proxyleri sessizce geç, konsolu kirletme
 
-def scrap():
-    print("⏳ Taze proxyler toplaniyor...")
-    try:
-        # Sadece hızlı ve taze proxyleri çekiyoruz
-        https = requests.get("https://api.proxyscrape.com/?request=displayproxies&proxytype=https&timeout=5000").text
-        http = requests.get("https://api.proxyscrape.com/?request=displayproxies&proxytype=http&timeout=5000").text
-        proxies = (https + "\n" + http).splitlines()
-        return [p.strip() for p in proxies if p.strip()]
-    except:
-        return []
+def get_proxies():
+    print("🌐 2026 Proxy Listesi Güncelleniyor...")
+    urls = [
+        "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=5000&country=all&ssl=all&anonymity=all",
+        "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=socks5&timeout=5000&country=all"
+    ]
+    all_p = []
+    for url in urls:
+        try:
+            res = requests.get(url, timeout=10).text
+            all_p.extend(res.splitlines())
+        except: continue
+    return list(set(all_p))
 
-def start():
-    proxies = scrap()
-    if not proxies:
-        print("[-] Proxy bulunamadi.")
-        return
-
+def run_cycle():
     channel = TARGET_LINK.split('/')[3]
     msgid = TARGET_LINK.split('/')[4]
     
-    threads = []
-    print(f"🚀 {len(proxies)} proxy ile islem baslatiliyor...")
-
-    for p in proxies:
-        while active_count() > N_THREADS:
-            time.sleep(0.01)
+    while True: # İŞTE BURASI: Hiç durmadan başa döner
+        proxies = get_proxies()
+        if not proxies:
+            time.sleep(10); continue
+            
+        print(f"🔥 {len(proxies)} Proxy ile saldırı başlıyor...")
+        for p in proxies:
+            p = p.strip()
+            if not p: continue
+            
+            # SOCKS5 kontrolü
+            full_p = f"socks5://{p}" if ":" in p and len(all_p) > 500 else f"http://{p}"
+            
+            while active_count() > MAX_THREADS:
+                time.sleep(0.05)
+            
+            threading.Thread(target=send_view, args=(channel, msgid, p)).start()
         
-        t = threading.Thread(target=send_seen, args=(channel, msgid, p))
-        t.start()
-        threads.append(t)
-
-    # Tüm threadlerin bitmesini bekle
-    for t in threads:
-        t.join(timeout=1)
-    print("✅ Bu tur tamamlandi. GitHub Actions kapaniyor.")
+        print("🔄 Liste bitti, 5 saniye soğuma ve yeni liste...")
+        time.sleep(5)
 
 if __name__ == "__main__":
-    start() # Sonsuz döngü kaldırıldı (GitHub Actions için)
+    run_cycle()
