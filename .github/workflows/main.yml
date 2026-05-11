@@ -22,4 +22,4 @@ jobs:
 
       - name: Run Bot
         # -u parametresi loglarin anlik akmasini saglar (sen girince degil, her zaman akar)
-        run: python -u bot.py 
+        run: python -u your_script_name.py 
