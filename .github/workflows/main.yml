@@ -1,25 +1,20 @@
-name: Flux View Automation
+name: GÜNCELE
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: '*/15 * * * *' # Her 15 dakikada bir tetikler
-  workflow_dispatch: # Manuel baslatma butonu
+    - cron: '0 * * * *' # Her saat başı (eğer biri durursa diğeri başlasın diye güvenlik önlemi)
 
 jobs:
-  build:
+  non-stop:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
-
-      - name: Install Dependencies
+          python-version: '3.11'
+      - name: Dependencies
         run: pip install requests
-
-      - name: Run Bot
-        # -u parametresi loglarin anlik akmasini saglar (sen girince degil, her zaman akar)
+      - name: Run 2026 Bot
+        # DİKKAT: -u parametresi GitHub'ın kodun çalıştığını anlamasını sağlar!
         run: python -u your_script_name.py 
