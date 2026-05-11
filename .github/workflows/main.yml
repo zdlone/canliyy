@@ -9,25 +9,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Dosyayı kaydetmek için şart
     
-    # GitHub'ın istediği zorunlu Node.js 24 değişkenini ekledik
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # GitHub 2026 zorunluluğu
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4 # v3'ten v4'e yükselttik
+        uses: actions/checkout@v4
 
       - name: Python Kur
-        uses: actions/setup-python@v5 # v4'ten v5'e yükselttik
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # Daha güncel bir Python sürümü
+          python-version: '3.11'
 
       - name: Gereçleri Kur
         run: |
           python -m pip install --upgrade pip
-          pip install -U yt-dlp
+          pip install requests yt-dlp # Her iki yöntemi de desteklemesi için ikisini de kuruyoruz
 
       - name: Linki Yenile
         run: python youtube_al.py
@@ -37,5 +36,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add yayinlar.m3u
-          git commit -m "Link güncellendi (Node 24 Guncellemesi)" || exit 0
+          git commit -m "Link güncellendi (2026 Stabil Versiyon)" || exit 0
           git push
