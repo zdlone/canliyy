@@ -8,33 +8,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # Dosyayı kaydetmek için şart
-    
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # GitHub 2026 zorunluluğu
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v2
       - name: Python Kur
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.11'
-
+          python-version: '3.x'
       - name: Gereçleri Kur
         run: |
-          python -m pip install --upgrade pip
-          pip install requests yt-dlp # Her iki yöntemi de desteklemesi için ikisini de kuruyoruz
-
+          pip install yt-dlp
       - name: Linki Yenile
         run: python youtube_al.py
-
       - name: Değişiklikleri Kaydet
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add yayinlar.m3u
-          git commit -m "Link güncellendi (2026 Stabil Versiyon)" || exit 0
+          git add .
+          git commit -m "Link güncellendi" || exit 0
           git push
