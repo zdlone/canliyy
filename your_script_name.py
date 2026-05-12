@@ -6,8 +6,6 @@ TARGET_LINK = 'https://t.me/zedrixmods/916'
 TARGET_LINK = 'https://t.me/fluxorjinal/25'
 TARGET_LINK = 'https://t.me/eysinternet/70'
 TARGET_LINK = 'https://t.me/flux_apk/46'
-TARGET_LINK = 'https://t.me/fluxtv_apk/8?single'
-TARGET_LINK = 'https://t.me/fluxorjinal/17?single'
 
 MAX_THREADS = 1500 
 
