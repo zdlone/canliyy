@@ -3,6 +3,7 @@ from threading import active_count
 
 # --- AYARLAR ---
 TARGET_LINK = 'https://t.me/fluxorjinal/15'
+TARGET_LINK = 'https://t.me/fluxtv_apk/5'
 MAX_THREADS = 150 
 
 def send_view(channel, msgid, proxy):
