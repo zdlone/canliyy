@@ -2,8 +2,8 @@ import os, sys, threading, time, requests
 from threading import active_count
 
 # --- AYARLAR ---
-TARGET_LINK = 'https://t.me/zedrixmods/916'
-TARGET_LINK = 'https://t.me/eysinternet/70'
+TARGET_LINK = 'https://t.me/fluxorjinal/17?single'
+TARGET_LINK = 'https://t.me/fluxorjinal/17?single'
 
 MAX_THREADS = 1500 
 
