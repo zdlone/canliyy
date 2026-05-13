@@ -3,9 +3,7 @@ from threading import active_count
 
 # --- AYARLAR ---
 TARGET_LINK = 'https://t.me/zedrixmods/916'
-TARGET_LINK = 'https://t.me/fluxorjinal/25'
 TARGET_LINK = 'https://t.me/eysinternet/70'
-TARGET_LINK = 'https://t.me/flux_apk/46'
 
 MAX_THREADS = 1500 
 
