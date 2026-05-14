@@ -17,4 +17,4 @@ jobs:
         run: pip install requests
       - name: Run 2026 Bot
         # DİKKAT: -u parametresi GitHub'ın kodun çalıştığını anlamasını sağlar!
-        run: python -u your_script_name.py 
+        run: python -u hepsi.py 
