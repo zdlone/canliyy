@@ -7,7 +7,11 @@ import re
 from threading import active_count
 
 # --- AYARLAR ---
-TARGET_LINK = 'https://t.me/fluxorjinal/17' # Buraya temiz linki veya parametreli linki koyabilirsin
+TARGET_LINK = 'https://t.me/fluxorjinal/17' 
+TARGET_LINK = 'https://t.me/zedrixmods/916'
+TARGET_LINK = 'https://t.me/fluxtv_apk/8'
+TARGET_LINK = 'https://t.me/fluxtv_apk/12'
+TARGET_LINK = 'https://t.me/flux_apk/42'
 MAX_THREADS = 250
 
 def send_view(channel, msgid, proxy):
