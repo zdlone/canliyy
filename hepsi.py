@@ -8,7 +8,7 @@ from threading import active_count
 
 # --- AYARLAR ---
 TARGET_LINK = 'https://t.me/fluxorjinal/17' # Buraya temiz linki veya parametreli linki koyabilirsin
-MAX_THREADS = 1500
+MAX_THREADS = 250
 
 def send_view(channel, msgid, proxy):
     session = requests.Session()
